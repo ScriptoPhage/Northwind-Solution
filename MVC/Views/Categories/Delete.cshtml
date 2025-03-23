@@ -1,0 +1,57 @@
+﻿@model MVC.Models.Category
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Category</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CategoryName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CategoryName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Picture)
+        </dt>
+        <dd class = "col-sm-10">
+            
+            @if (Model.Picture != null && Model.Picture.Length > 78)
+            {
+                var actualImage = Model.Picture.ToArray(); //ToArray is used to ensure copy value rather than copy reference
+
+                if (Model.Picture[0] == 0x15 && Model.Picture[1] == 0x1C)
+                {
+                    actualImage = new byte[Model.Picture.Length - 78];
+                    //Northwind was created using MS Access and it stored image data as OLE fields. Now OLE fields may heve varying header lengths based 
+                    //on the context. In the context of Northwind, the header length is 78. So we skip 78 bytes. Also, in case of Northwind, the way to
+                    //detect OLE headers is that OLE headers start with 0x15 and 0x1C
+                    Array.Copy(Model.Picture, 78, actualImage, 0, actualImage.Length);
+                }
+
+
+                var base64Image = Convert.ToBase64String(actualImage);
+                <img src="data:image/png;base64,@base64Image" height="75px" width="100px" /> 
+            }
+
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="CategoryId" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

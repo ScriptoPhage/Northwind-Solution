@@ -1,0 +1,68 @@
+﻿@model IEnumerable<MVC.Models.Category>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<div id="category_Table"></div>
+@section Scripts
+{
+    <script>
+        $(document).ready(function() {
+
+                    var categoryTable = new Tabulator("#category_Table", {
+                                                        layout: "fitColumns",
+                                                        columns : [
+                                                           {title : "CategoryId", field: "categoryId"},
+                                                           {title : "CategoryName", field: "categoryName"},
+                                                           {title : "Description", field: "description"},
+                                                           {
+                                                            title: "Picture", 
+                                                            field:"picture", 
+                                                            formatter: function(cell){
+                                                                            var base64string = cell.getValue();
+                                                                                return `<img src="data:image/png;base64,${base64string}" height="75px" width="100px">`
+                                                            } 
+                                                           },
+                                                            {
+                                                                title: "Actions",
+                                                                formatter: function(cell) {
+                                                                    var rowData = cell.getRow().getData(); // Get the entire row's data
+                                                                    var id = rowData.categoryId; // Extract CategoryId
+                                                                    
+                                                                    return `
+                                                                        <a href="/Categories/Edit/${id}" class="btn btn-primary btn-sm">Edit</a>
+                                                                        <a href="/Categories/Details/${id}" class="btn btn-info btn-sm">Details</a>
+                                                                        <a href="/Categories/Delete/${id}" class="btn btn-danger btn-sm">Delete</a>
+                                                                    `;
+                                                                },
+                                                                hozAlign: "center",
+                                                                headerSort: false
+                                                            }
+                                                        ],
+                                                        paginationSize: 10,
+                    });
+                    $.ajax({
+                            url:"/Categories/GetCategories",
+                            method: "GET",
+                            contentType: 'application/json',
+                            success:function(response){
+                                                       console.log("Done");
+                                                       categoryTable.setData(response);
+
+                            },
+                            error:function(){
+                                              alert(`failed!`);
+                            }
+                            
+                    });
+
+    });
+    </script>
+}

@@ -1,0 +1,349 @@
+﻿@{
+    ViewData["Title"] = "North Wind Viewer";
+}
+
+@* <div class="text-center"> *@
+@*     <h1 class="display-4">Welcome</h1> *@
+@*     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p> *@
+@* </div> *@
+<div class=container mt-3>
+    <form method="get" id="custorderhistform" asp-action="GetCustOrderHist" asp-controller="Home">
+        <div class="form-group">
+            <h2>Customer Order History</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">Customer ID</label>
+                    <input id="coh_customerid_field"/>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Execute" class="btn btn-primary"/>
+        </div>
+        <br />
+        <div id="custordhist_table"></div>
+    </form>
+    <br />
+    <form method="get" id="custorderdetailform" asp-action="GetCustOrderDetail" asp-controller="Home">
+        <div class="form-group">
+            <h2>Customer Order Detail</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">Customer ID</label>
+                    <input id="cod_orderid_field" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Execute" class="btn btn-primary" />
+        </div>
+        <br />
+        <div id="custordetail_table"></div>
+    </form>
+    <br />
+    <form method="get" id="custordersordersform" asp-action="GetCustOrderOrders" asp-controller="Home">
+        <div class="form-group">
+            <h2>Customer Order Order</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">Customer ID</label>
+                    <input id="coo_customerid_field" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Execute" class="btn btn-primary" />
+        </div>
+        <br />
+        <div id="custordord_table"></div>
+    </form>
+    <br />
+    <form method="get" id="empsalesbycountryform" asp-action="GetEmployeeSalesByCountry" asp-controller="Home">
+        <div class="form-group">
+            <h2>Employee Sales by Country</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">Beginning Date</label>
+                    <input id="esbc_beginningdate_field" type="date" value="1996-07-16" />
+                </div>
+                <div class="col-md-4">
+                    <label class="control-label">Ending Date</label>
+                    <input id="esbc_endingdate_field" type="date" value="1996-08-06"/>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Execute" class="btn btn-primary" />
+        </div>
+        <br />
+        <div id="empsalesbycountry_table"></div>
+    </form>
+    <br />
+    <form method="get" id="salesbyyearform" asp-action="GetSalesByYear" asp-controller="Home">
+        <div class="form-group">
+            <h2>Sales by Year</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">Beginning Date</label>
+                    <input id="sby_beginningdate_field" type="date" value="1996-07-16" />
+                </div>
+                <div class="col-md-4">
+                    <label class="control-label">Ending Date</label>
+                    <input id="sby_endingdate_field" type="date" value="1996-08-06" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Execute" class="btn btn-primary" />
+        </div>
+        <br />
+        <div id="salesbyyear_table"></div>
+    </form>
+    <br />
+    <form method="get" id="salesbycategoryform" asp-action="GetSalesByCategory" asp-controller="Home">
+        <div class="form-group">
+            <h2>Sales by Category</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <label class="control-label">Category name</label>
+                    <input id="sbc_categoryname_field" />
+                </div>
+                <div class="col-md-4">
+                    <label class="control-label">Year</label>
+                    <input id="sbc_year_field" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Execute" class="btn btn-primary" />
+        </div>
+        <br />
+        <div id="salesbycategory_table"></div>
+    </form>
+    <br />
+    <form method="get" id="tenmostexpensiveproductsform" asp-action=" GetTenMostExpensiveProducts" asp-controller="Home">
+        <div class="form-group">
+            <h2>Ten Most Expensive Products</h2>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Execute" class="btn btn-primary" />
+        </div>
+        <br />
+        <div id="tenmostexpensiveproducts_table"></div>
+    </form>
+    <br />
+</div>
+@section Scripts
+{
+
+    <script>
+    
+        // Fetch data for each table and initialize Tabulator with parameters
+        $(document).ready(function() {
+                    var custorderHistTable = new Tabulator("#custordhist_table", {
+                                                        layout: "fitColumns",
+                                                        columns : [
+                                                           {title : "Product Name", field: "productName"},
+                                                           {title : "Total", field: "total"},
+                                                        ],
+                                                        paginationSize: 10,
+                    });
+                    $('#custorderhistform').submit(function(e)  {
+                            e.preventDefault();
+                            const customerid_input = $('#coh_customerid_field').val();
+                            $.ajax({
+                                url: `/Home/GetCustomerHistory?customerId=${customerid_input}`,
+                                method: 'GET',
+                                contentType: 'application/json',
+                                success:function(response){
+                                    console.log("Result is:",response);
+                                    custorderHistTable.setData(response);
+                                    
+                                },
+                                error:function(){
+                                    alert(`failed!`);
+                                }
+                            });
+
+                    });
+
+
+                    var custorderdetailTable = new Tabulator("#custordetail_table", {
+                                                        layout: "fitColumns",
+                                                        paginationSize: 10,
+                                                        columns : [
+                                                           {title : "Product Name", field: "productName"},
+                                                           {title : "Unit Price", field: "unitPrice"},
+                                                           {title : "Quantity", field: "quantity"},
+                                                           {title : "Discount", field:"discount"},
+                                                           {title : "Extended Prince", field:"extendedPrice"}
+                                                        ],
+                    });
+                    $('#custorderdetailform').submit(function(e)  {
+                            e.preventDefault();
+                            const orderid_input = $('#cod_orderid_field').val();
+                            $.ajax({
+                                url: `/Home/GetCustOrderDetail?orderId=${orderid_input}`,
+                                method: 'GET',
+                                contentType: 'application/json',
+                                success:function(response){
+                                    custorderdetailTable.setData(response);
+                                    console.log(response);
+                                },
+                                error:function(){
+                                    alert(`failed!`);
+                                }
+                            });
+                    });
+
+
+                    var custorderorderTable = new Tabulator("#custordord_table", {
+                                                        layout: "fitColumns",
+                                                        paginationSize: 10,
+                                                        columns : [
+                                                           {title : "Order ID", field: "orderID"},
+                                                           {title : "Order Date", field: "orderDate"},
+                                                           {title : "Required Date", field: "requiredDate"},
+                                                           {title : "Shipped Date", field:"shippedDate"},
+                                                        ],
+                    });
+                    $('#custordersordersform').submit(function(e)  {
+                            e.preventDefault();
+                            const customerid_input = $('#coo_customerid_field').val();
+                            $.ajax({
+                                url: `/Home/GetCustOrderOrders?customerId=${customerid_input}`,
+                                method: 'GET',
+                                contentType: 'application/json',
+                                success:function(response){
+                                    custorderorderTable.setData(response);
+                                    console.log(response);
+                                },
+                                error:function(){
+                                    alert(`failed!`);
+                                }
+                            });
+                    });
+
+
+                    var empsalesbycountryTable = new Tabulator("#empsalesbycountry_table", {
+                                                        layout: "fitColumns",
+                                                        pagination: true,
+                                                        paginationSize: 10,
+                                                        columns : [
+                                                           {title : "Country", field: "country"},
+                                                           {title : "Last Name", field: "lastName"},
+                                                           {title : "First Name", field: "firstName"},
+                                                           {title : "Shipped Date", field:"shippedDate"},
+                                                           {title : "Order ID", field:"orderID"},
+                                                           {title : "Sale Amount", field:"saleAmount"},
+                                                        ],
+                    });
+                    $('#empsalesbycountryform').submit(function(e)  {
+                            e.preventDefault();
+                            const beginningdate_input = $('#esbc_beginningdate_field').val();
+                            const endingdate_input = $('#esbc_endingdate_field').val();
+                            $.ajax({
+                                url: `/Home/GetEmployeeSalesByCountry?beginningDate=${beginningdate_input}&endingDate=${endingdate_input}`,
+                                method: 'GET',
+                                contentType: 'application/json',
+                                success:function(response){
+                                    empsalesbycountryTable.setData(response);
+                                    console.log(response);
+                                },
+                                error:function(){
+                                    alert(`failed!`);
+                                }
+                            });
+                    });
+
+
+                    var salesbyyearTable = new Tabulator("#salesbyyear_table", {
+                                                        layout: "fitColumns",
+                                                        pagination: true,
+                                                        paginationSize: 10,
+                                                        columns : [                                      
+                                                           {title : "Shipped Date", field:"shippedDate"},
+                                                           {title : "Order ID", field:"orderID"},
+                                                           {title : "Subtotal", field:"subtotal"},
+                                                           {title : "Year", field: "year"},
+                                                        ],
+                    });
+                    $('#salesbyyearform').submit(function(e)  {
+                            e.preventDefault();
+                            const beginningdate_input = $('#sby_beginningdate_field').val();
+                            const endingdate_input = $('#sby_endingdate_field').val();
+                            $.ajax({
+                                url: `/Home/GetSalesByYear?beginningDate=${beginningdate_input}&endingDate=${endingdate_input}`,
+                                method: 'GET',
+                                contentType: 'application/json',
+                                success:function(response){
+                                    salesbyyearTable.setData(response);
+                                    console.log(response);
+                                },
+                                error:function(){
+                                    alert(`failed!`);
+                                }
+                            });
+                    });
+
+
+                    var salesbycategoryTable = new Tabulator("#salesbycategory_table", {
+                                                        layout: "fitColumns",
+                                                        pagination: true,
+                                                        paginationSize: 10,
+                                                        columns : [
+                                                           {title : "Product Name", field:"productName"},
+                                                           {title : "Total Purchase", field:"totalPurchase"},
+                                                        ],
+                    });
+                    $('#salesbycategoryform').submit(function(e)  {
+                            e.preventDefault();
+                            const categoryname_input = $('#sbc_categoryname_field').val();
+                            const year_input = $('#sby_year_field').val();
+                            $.ajax({
+                                url: `/Home/GetSalesByCategory?categoryName=${categoryname_input}&Year=${year_input}`,
+                                method: 'GET',
+                                contentType: 'application/json',
+                                success:function(response){
+                                    salesbycategoryTable.setData(response);
+                                    console.log(response);
+                                },
+                                error:function(){
+                                    alert(`failed!`);
+                                }
+                            });
+                    });
+
+
+                    var tenmostexpensiveproductsTable = new Tabulator("#tenmostexpensiveproducts_table", {
+                                                        layout: "fitColumns",
+                                                        pagination: true,
+                                                        paginationSize: 10,
+                                                        columns : [
+                                                           {title : "Ten Most Expensive Products", field:"tenMostExpensiveProducts"},
+                                                           {title : "Unit Price", field:"unitPrice"},
+                                                        ],
+                    });
+                    $('#tenmostexpensiveproductsform').submit(function(e)  {
+                            e.preventDefault();
+                            $.ajax({
+                                url: `/Home/GetTenMostExpensiveProducts/`,
+                                method: 'GET',
+                                contentType: 'application/json',
+                                success:function(response){
+                                    tenmostexpensiveproductsTable.setData(response);
+                                    console.log(response);
+                                },
+                                error:function(){
+                                    alert(`failed!`);
+                                }
+                            });
+                    });
+
+
+            // initTable("table1", "/Tables/GetTableData?tableNumber=1", { param1: "value1", param2: 123 });
+            // initTable("table2", "/Tables/GetTableData?tableNumber=2", { param1: "value2", param2: 456 });
+            // Repeat for other tables with their respective parameters
+        });
+    </script>
+}
