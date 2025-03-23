@@ -3,9 +3,9 @@
 ![ASP.NET Core](https://img.shields.io/badge/ASP.NET-Core%208-blue) 
 
 
-An asp.net web app operating on the [Northwind Database](https://github.com/microsoft/sql-server-samples/tree/master/samples/databases/northwind-pubs). This solution was built after migrating the database from SQL Server to PostgreSQL using **DBeaver**. The SQL Server views and procedures were manually converted to PostgreSQL views and functions respectively.
+An asp.net web app operating on the [Northwind Database](https://github.com/microsoft/sql-server-samples/tree/master/samples/databases/northwind-pubs). This solution was built after migrating the database from SQL Server to PostgreSQL using [**DBeaver**](https://dbeaver.io/). The SQL Server views and procedures were manually converted to PostgreSQL views and functions respectively.
 ## Features
-- Fetching and showing data using **Tabulator.js** by invoking Northwind functions with parameters
+- Fetching and showing data using [**Tabulator.js**](https://tabulator.info/) by invoking Northwind functions with parameters
 - Image data Creation, Reading, Update and Deletion (**CRUD**) on the Categories table data.
 - Is capable of detecting images with OLE headers and process accordingly
 - Can execute raw SQL query through Entity Framework Core
